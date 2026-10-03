@@ -1,18 +1,68 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>7Board · Rust Canary</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>7Board · Rust Admin Canary</title>
 <style>
-:root{color-scheme:dark;font:14px/1.45 Inter,ui-sans-serif,system-ui,sans-serif;background:#0b1220;color:#dbeafe}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 30% 0,#15294a 0,#0b1220 42%,#080d16 100%);min-height:100vh}.shell{max-width:1280px;margin:auto;padding:28px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px}.brand{font-size:24px;font-weight:750;letter-spacing:.02em}.tag{color:#8ee7c5;background:#0b3a34;border:1px solid #146b5d;border-radius:999px;padding:4px 10px;font-size:12px}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:24px 0}.card{background:#101c30cc;border:1px solid #203654;border-radius:14px;padding:15px;box-shadow:0 10px 30px #0002}.label{color:#8da8c9;font-size:12px}.value{font-size:20px;margin-top:5px}.panel{background:#0d1829e8;border:1px solid #213754;border-radius:14px;overflow:hidden}.panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #203654}.viewport{height:620px;overflow:auto;position:relative}.rows{position:relative}.row{height:42px;display:grid;grid-template-columns:80px 1.5fr 1fr 130px 130px;align-items:center;padding:0 18px;border-bottom:1px solid #172943;position:absolute;left:0;right:0}.row.head{position:sticky;top:0;background:#12223a;height:38px;z-index:2;position:relative;color:#9bb5d4;font-size:12px}.ok{color:#8ee7c5}.muted{color:#8da8c9}.foot{margin-top:16px;color:#7890ad;font-size:12px}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#56e39f;margin-right:7px;box-shadow:0 0 12px #56e39f}.warn{color:#ffd479}@media(max-width:900px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.row{grid-template-columns:55px 1.2fr .8fr 85px 75px;padding:0 10px;font-size:12px}.shell{padding:16px}}
+:root{color-scheme:dark;font:14px/1.45 Inter,ui-sans-serif,system-ui,sans-serif;background:#08111f;color:#dbeafe}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 28% 0,#173256 0,#0b1525 42%,#070c15 100%);min-height:100vh}
+.shell{max-width:1440px;margin:auto;padding:28px}
+.top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.brand{font-size:25px;font-weight:760;letter-spacing:.02em}.tag{color:#8ee7c5;background:#0b3a34;border:1px solid #146b5d;border-radius:999px;padding:4px 10px;font-size:12px}
+.muted{color:#91a8c5}.small{font-size:12px}.ok{color:#8ee7c5}.warn{color:#ffd479}.bad{color:#ff9b9b}
+.conn{padding-top:8px;text-align:right}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#56e39f;margin-right:7px;box-shadow:0 0 12px #56e39f}.bad .dot{background:#ff7777;box-shadow:0 0 12px #ff7777}
+.login{display:flex;gap:8px;align-items:end;margin-top:22px;padding:16px;background:#0c1829e8;border:1px solid #213754;border-radius:14px}
+.login label{display:flex;flex-direction:column;gap:5px;color:#91a8c5;font-size:12px}.login input{width:240px;background:#091321;color:#e4efff;border:1px solid #294564;border-radius:8px;padding:9px 10px}.login button{height:37px;background:#3dd39b;color:#062117;border:0;border-radius:8px;padding:0 18px;font-weight:700;cursor:pointer}.login button:disabled{opacity:.55;cursor:wait}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0 14px}.card{background:#0f1d31df;border:1px solid #203754;border-radius:14px;padding:15px;box-shadow:0 10px 30px #0002}.label{color:#91a8c5;font-size:12px}.value{font-size:20px;margin-top:5px;min-height:29px}
+.panel{background:#0c1829e8;border:1px solid #213754;border-radius:14px;overflow:hidden}.panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid #203754}.viewport{height:620px;overflow:auto;position:relative}.rows{position:relative}.row{height:42px;display:grid;grid-template-columns:70px 1.2fr 1fr 1.6fr 95px 95px 95px;align-items:center;padding:0 18px;border-bottom:1px solid #172943;position:absolute;left:0;right:0}.row.head{position:sticky;top:0;background:#12243d;height:38px;z-index:2;position:relative;color:#9bb5d4;font-size:12px}.row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.foot{margin-top:15px;color:#7890ad;font-size:12px}
+.hidden{display:none!important}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.row{grid-template-columns:50px 1.1fr .8fr 1.2fr 70px 70px 70px;padding:0 10px;font-size:12px}.shell{padding:16px}.login{flex-wrap:wrap}.login input{width:100%}}
 </style>
 </head>
-<body><main class="shell"><div class="top"><div><div class="brand">7Board <span class="tag">Rust Canary</span></div><div class="muted">海量节点管理的低开销实时读模型预览</div></div><div id="conn" class="muted"><span class="dot"></span>连接初始化</div></div>
-<section class="cards"><div class="card"><div class="label">运行时</div><div class="value">Rust / Tokio</div></div><div class="card"><div class="label">DOM 行数</div><div class="value">虚拟化 ≤ 72</div></div><div class="card"><div class="label">Redis 依赖</div><div class="value">可选 / 无强依赖</div></div><div class="card"><div class="label">数据状态</div><div id="db" class="value warn">影子未接管</div></div></section>
-<section class="panel"><div class="panel-head"><div><strong>节点状态预览</strong><div class="muted">只渲染可视窗口；示例数据不会写入生产数据库</div></div><div id="tick" class="muted">等待 WS</div></div><div class="row head"><span>ID</span><span>节点</span><span>协议</span><span>状态</span><span>延迟</span></div><div id="viewport" class="viewport"><div id="rows" class="rows"></div></div></section>
-<div class="foot">7Board canary · <a href="/healthz" style="color:#8ee7c5">healthz</a> · <a href="/readyz" style="color:#8ee7c5">readyz</a> · <a href="/api/v1/meta" style="color:#8ee7c5">meta</a></div></main>
+<body>
+<main class="shell">
+  <div class="top">
+    <div><div class="brand">7Board <span class="tag">Rust Admin Canary</span></div><div class="muted">只读 MySQL 影子读模型 · 不写入原 Xboard 数据库</div></div>
+    <div id="conn" class="conn muted"><span class="dot"></span>尚未登录</div>
+  </div>
+  <form id="login" class="login">
+    <label>管理员邮箱<input id="email" type="email" autocomplete="username" required></label>
+    <label>管理员密码<input id="password" type="password" autocomplete="current-password" required></label>
+    <button id="loginBtn" type="submit">登录只读管理页</button>
+    <span id="loginMsg" class="small muted"></span>
+  </form>
+  <section class="cards">
+    <div class="card"><div class="label">运行时</div><div class="value">Rust / Tokio</div><div class="small muted">PHP、Swoole、Octane、Horizon、Redis 均非核心依赖</div></div>
+    <div class="card"><div class="label">节点数量</div><div id="nodeCount" class="value">—</div><div class="small muted">仅渲染可视行，分页游标读取</div></div>
+    <div class="card"><div class="label">数据库</div><div id="db" class="value warn">未连接</div><div id="dbSite" class="small muted">等待管理员登录</div></div>
+    <div class="card"><div class="label">写入能力</div><div class="value ok">关闭</div><div class="small muted">登录不更新 last_login_at</div></div>
+  </section>
+  <section class="panel">
+    <div class="panel-head"><div><strong>节点管理预览</strong><div id="summary" class="muted small">登录后读取真实节点字段；协议密钥和 JSON 配置不下发浏览器</div></div><div id="tick" class="muted small">等待 WSS</div></div>
+    <div class="row head"><span>ID</span><span>名称</span><span>类型</span><span>主机</span><span>端口</span><span>显示</span><span>启用</span></div>
+    <div id="viewport" class="viewport"><div id="rows" class="rows"></div></div>
+  </section>
+  <div class="foot">7Board canary · <a href="/healthz" style="color:#8ee7c5">healthz</a> · <a href="/readyz" style="color:#8ee7c5">readyz</a> · <a href="/api/v1/meta" style="color:#8ee7c5">meta</a> · 数据库读权限与管理员权限通过独立验收。</div>
+</main>
 <script>
-(()=>{const total=100000,rowH=42,viewport=document.querySelector('#viewport'),rows=document.querySelector('#rows'),visible=()=>Math.ceil(viewport.clientHeight/rowH)+8;rows.style.height=(total*rowH)+'px';function render(){const start=Math.max(0,Math.floor(viewport.scrollTop/rowH)-4),end=Math.min(total,start+visible());let h='';for(let i=start;i<end;i++){const n=i+1;h+=`<div class="row" style="top:${i*rowH}px"><span>${n}</span><span>edge-${String(n).padStart(6,'0')}</span><span>${n%3?'VLESS':'TUIC'}</span><span class="ok"><span class="dot"></span>在线</span><span class="muted">${28+(n%73)} ms</span></div>`}rows.innerHTML=h}viewport.addEventListener('scroll',()=>requestAnimationFrame(render),{passive:true});addEventListener('resize',render);render();
-const conn=document.querySelector('#conn'),tick=document.querySelector('#tick');function ws(){const p=location.protocol==='https:'?'wss':'ws';const s=new WebSocket(`${p}://${location.host}/ws/status`);s.onopen=()=>{conn.innerHTML='<span class="dot"></span>WS 实时心跳';conn.className='ok'};s.onmessage=e=>{try{const m=JSON.parse(e.data);if(m.type==='heartbeat')tick.textContent='最近心跳 '+new Date(m.ts*1000).toLocaleTimeString()}catch{}};s.onclose=()=>{conn.textContent='WS 重连等待';conn.className='warn';setTimeout(ws,2000)};s.onerror=()=>s.close()}ws();fetch('/api/v1/meta').then(r=>r.json()).then(m=>{document.querySelector('#db').textContent=m.database_mode==='mysql-shadow'?'MySQL 影子读模型':'影子未接管'}).catch(()=>{});
+(()=> {
+  const loginForm=document.querySelector('#login'),loginBtn=document.querySelector('#loginBtn'),loginMsg=document.querySelector('#loginMsg');
+  const conn=document.querySelector('#conn'),tick=document.querySelector('#tick'),db=document.querySelector('#db'),dbSite=document.querySelector('#dbSite');
+  const nodeCount=document.querySelector('#nodeCount'),summary=document.querySelector('#summary'),viewport=document.querySelector('#viewport'),rows=document.querySelector('#rows');
+  const rowH=42;let token='',nodes=[],socket=null,reconnectTimer=0,loading=false;
+  function escapeHtml(value){return String(value===null||value===undefined?'':value).replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
+  function setConn(text,kind){conn.textContent='';const dot=document.createElement('span');dot.className='dot';conn.appendChild(dot);conn.appendChild(document.createTextNode(text));conn.className='conn '+(kind||'muted')}
+  function render(){const total=nodes.length;rows.style.height=(total*rowH)+'px';if(!total){rows.innerHTML='<div class="muted" style="padding:22px 18px">登录后显示真实节点；当前没有已加载数据。</div>';return}const start=Math.max(0,Math.floor(viewport.scrollTop/rowH)-4),end=Math.min(total,start+Math.ceil(viewport.clientHeight/rowH)+8);let html='';for(let i=start;i<end;i++){const n=nodes[i];html+='<div class="row" style="top:'+(i*rowH)+'px"><span>'+escapeHtml(n.id)+'</span><span>'+escapeHtml(n.name)+'</span><span>'+escapeHtml(n.node_type)+'</span><span title="'+escapeHtml(n.host||'')+'">'+escapeHtml(n.host||'—')+'</span><span>'+escapeHtml(n.server_port||n.port||'—')+'</span><span class="'+(n.shown?'ok':'muted')+'">'+(n.shown?'显示':'隐藏')+'</span><span class="'+(n.enabled?'ok':'warn')+'">'+(n.enabled?'启用':'停用')+'</span></div>'}rows.innerHTML=html}
+  viewport.addEventListener('scroll',function(){requestAnimationFrame(render)},{passive:true});addEventListener('resize',render);
+  async function api(path,options){const headers=Object.assign({'Accept':'application/json'},(options&&options.headers)||{});if(token)headers.Authorization='Bearer '+token;const response=await fetch(path,Object.assign({},options||{}, {headers:headers}));let body={};try{body=await response.json()}catch(e){}if(!response.ok)throw new Error(body.error||('HTTP '+response.status));return body}
+  async function loadNodes(){nodes=[];let cursor=null;for(let page=0;page<100;page++){const query=cursor===null?'?limit=500':'?limit=500&cursor='+encodeURIComponent(cursor);const body=await api('/api/v1/admin/nodes'+query);if(Array.isArray(body.nodes))nodes=nodes.concat(body.nodes);cursor=body.next_cursor;if(cursor===null||cursor===undefined)break}nodeCount.textContent=String(nodes.length);render()}
+  function connectSocket(){if(!token)return;if(socket){try{socket.close()}catch(e){}}const scheme=location.protocol==='https:'?'wss':'ws';socket=new WebSocket(scheme+'://'+location.host+'/ws/admin');socket.onopen=function(){setConn('WSS 管理实时通道','ok');socket.send(JSON.stringify({type:'auth',token:token}))};socket.onmessage=function(event){try{const message=JSON.parse(event.data);if(message.type==='hello'){tick.textContent='管理员通道已认证'}else if(message.type==='heartbeat'){tick.textContent='最近心跳 '+new Date(message.ts*1000).toLocaleTimeString()}else if(message.type==='node_snapshot'){tick.textContent='首屏节点 '+message.count+' 条'}else if(message.type==='node_change'){tick.textContent='节点有变化，重新读取';loadNodes().catch(function(){})}else if(message.type==='resync_required'){loadNodes().catch(function(){})}else if(message.type==='error'){setConn('WSS 鉴权失败','bad')}}catch(e){}};socket.onclose=function(){if(token){setConn('WSS 重连等待','warn');clearTimeout(reconnectTimer);reconnectTimer=setTimeout(connectSocket,2500)}};socket.onerror=function(){try{socket.close()}catch(e){}}}
+  async function loadData(){if(loading)return;loading=true;try{const s=await api('/api/v1/admin/summary');nodeCount.textContent=String(s.nodes);db.textContent='MySQL 影子读模型';db.className='value ok';dbSite.textContent=String(s.database_site)+' · '+s.users+' 用户 · '+s.orders+' 订单 · '+s.load_history+' 负载历史';summary.textContent='节点 '+s.nodes+' · 用户 '+s.users+' · 订单 '+s.orders+' · 负载历史 '+s.load_history+'（只读）';await loadNodes();connectSocket()}catch(error){loginMsg.textContent=error.message;loginMsg.className='small bad'}finally{loading=false}}
+  loginForm.addEventListener('submit',async function(event){event.preventDefault();loginBtn.disabled=true;loginMsg.textContent='正在验证管理员权限…';loginMsg.className='small muted';try{const body=await api('/api/v1/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:document.querySelector('#email').value,password:document.querySelector('#password').value})});token=body.token;loginMsg.textContent='登录成功，读取只读模型';loginMsg.className='small ok';document.querySelector('#password').value='';await loadData()}catch(error){token='';loginMsg.textContent=error.message;loginMsg.className='small bad';setConn('尚未登录','muted')}finally{loginBtn.disabled=false}});
+  render();
 })();
-</script></body></html>
+</script>
+</body>
+</html>
