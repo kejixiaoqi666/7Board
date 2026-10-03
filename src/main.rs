@@ -678,20 +678,22 @@ async fn read_nodes(
     let mut nodes = Vec::with_capacity(rows.len());
     for row in rows {
         nodes.push(NodeRow {
-            id: row.try_get("id")?,
+            id: row.try_get("id").unwrap_or_default(),
             node_type: row
-                .try_get::<Option<String>, _>("node_type")?
+                .try_get::<Option<String>, _>("node_type")
+                .unwrap_or_default()
                 .unwrap_or_else(|| "unknown".to_owned()),
             name: row
-                .try_get::<Option<String>, _>("name")?
+                .try_get::<Option<String>, _>("name")
+                .unwrap_or_default()
                 .unwrap_or_default(),
-            host: row.try_get("host")?,
-            port: row.try_get("port")?,
-            server_port: row.try_get("server_port")?,
-            enabled: row.try_get::<i64, _>("enabled")? != 0,
-            shown: row.try_get::<i64, _>("shown")? != 0,
-            sort: row.try_get("sort")?,
-            updated_unix: row.try_get("updated_unix")?,
+            host: row.try_get("host").unwrap_or_default(),
+            port: row.try_get("port").unwrap_or_default(),
+            server_port: row.try_get("server_port").unwrap_or_default(),
+            enabled: row.try_get::<i64, _>("enabled").unwrap_or_default() != 0,
+            shown: row.try_get::<i64, _>("shown").unwrap_or_default() != 0,
+            sort: row.try_get("sort").unwrap_or_default(),
+            updated_unix: row.try_get("updated_unix").unwrap_or_default(),
         });
     }
     let next_cursor = if nodes.len() == limit as usize {
