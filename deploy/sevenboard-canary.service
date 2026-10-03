@@ -1,0 +1,26 @@
+[Unit]
+Description=7Board Rust canary
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sevenboard
+Group=sevenboard
+WorkingDirectory=/opt/7board-canary
+Environment=SEVENBOARD_BIND=127.0.0.1:18120
+Environment=SEVENBOARD_DB_MODE=unconfigured
+Environment=SEVENBOARD_BUILD_ID=7board-canary-20261004
+ExecStart=/opt/7board-canary/sevenboard
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/7board-canary
+MemoryMax=256M
+TasksMax=256
+
+[Install]
+WantedBy=multi-user.target
