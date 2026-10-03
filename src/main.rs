@@ -763,7 +763,20 @@ async fn build_state() -> AppState {
             Ok(url) if !url.trim().is_empty() => {
                 match connect_shadow_db(&url, max_connections).await {
                     Ok(pool) => (Some(pool), "connected"),
-                    Err(_) => (None, "connection failed"),
+                    Err(error) => {
+                        let kind = match error {
+                            sqlx::Error::Database(_) => {
+                                "database authentication or selection failed"
+                            }
+                            sqlx::Error::Configuration(_) => "connection URL configuration failed",
+                            sqlx::Error::Tls(_) => "TLS connection failed",
+                            sqlx::Error::Io(_) => "network I/O failed",
+                            sqlx::Error::PoolTimedOut => "connection pool timeout",
+                            sqlx::Error::Protocol(_) => "MySQL protocol failed",
+                            _ => "connection failed",
+                        };
+                        (None, kind)
+                    }
                 }
             }
             _ => (None, "not configured"),
